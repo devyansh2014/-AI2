@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#5b4bdb">
+<title>Offline - पढ़ाईAI — Smart Homework & Exam Companion</title>
+<style>
+:root{--bg:#f5f6ff;--card:#fff;--ink:#20213a;--muted:#6d7088;--primary:#5b4bdb;--soft:#eeecff;--line:#e6e7f2;--green:#16845b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+button,input,textarea,select{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:12px 17px;font-weight:700}
+.primary{background:var(--primary);color:#fff}.secondary{background:var(--soft);color:var(--primary)}.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.wrap{max-width:1120px;margin:auto;padding:22px}.hidden{display:none!important}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px}
+.brand{display:flex;align-items:center;gap:10px;font-size:1.35rem;font-weight:900}.logo{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;background:var(--primary);color:white}
+.panel,.feature,.tool{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 8px 28px #24245a08}
+h1{font-size:clamp(2rem,5vw,3.3rem);line-height:1.1;margin:10px 0}h2{margin:0 0 8px}p{color:var(--muted);margin:7px 0 0}
+.hero{background:linear-gradient(125deg,#28235f,#6657e9);color:#fff;border-radius:26px;padding:30px;margin-bottom:22px}.hero p{color:#e2e0ff;max-width:650px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin:18px 0}.feature .emoji{font-size:1.7rem}.feature h3{margin:8px 0 3px;font-size:1.03rem}.feature p{font-size:.92rem}
+.feature{display:block;width:100%;text-align:left;color:var(--ink);font:inherit;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.feature:hover{transform:translateY(-3px);box-shadow:0 12px 30px #24245a12}
+.feature:focus-visible{outline:3px solid #9b91ff;outline-offset:3px}
+.tool-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.tab{background:white;border:1px solid var(--line);color:var(--muted)}.tab.active{background:var(--primary);color:#fff}
+.tool{margin-top:14px}.tool h2{font-size:1.25rem}.field{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;margin:8px 0 14px;color:var(--ink)}
+label{font-weight:700;font-size:.92rem}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}.output{white-space:pre-wrap;background:#f7f7ff;border:1px solid var(--line);border-radius:14px;padding:15px;margin-top:14px;min-height:55px}
+.auth{max-width:440px;margin:7vh auto}.auth .panel{padding:28px}.auth h1{font-size:2rem}
+.small{font-size:.85rem;color:var(--muted)}.credit{text-align:center;padding:28px 10px;color:var(--muted);font-size:.9rem}
+img.preview{max-width:100%;max-height:280px;border-radius:14px;display:block;margin-top:12px}
+.notice{background:#fff7df;border:1px solid #f2df9e;padding:12px;border-radius:12px;color:#72530a;font-size:.9rem;margin-top:12px}
+ul{padding-left:20px;color:var(--muted)}.top-actions{display:flex;gap:8px;align-items:center}
+@media(max-width:760px){.grid{grid-template-columns:1fr 1fr}.wrap{padding:14px}.hero{padding:23px}}
+@media(max-width:480px){.grid{grid-template-columns:1fr}.top-actions button{padding:9px 11px}.brand{font-size:1.12rem}}
+
+/* ---- Colorful theme ---- */
+:root{--primary:#6c4df6;--pink:#ff4d8d;--orange:#ff9f1c;--teal:#12b5a6;--blue:#2f80ff;--yellow:#ffd23f}
+body{background:#f3f0ff;background:linear-gradient(160deg,#e9f0ff 0%,#f6ecff 45%,#ffeef5 100%);background-attachment:fixed}
+.primary{background:#6c4df6;background:linear-gradient(90deg,#6c4df6,#ff4d8d);box-shadow:0 6px 16px rgba(108,77,246,.35)}
+.primary:hover{opacity:.93}
+.secondary{background:#fff;color:#6c4df6}
+.ghost{border:2px solid #e3dcff}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 22px;color:#fff;background:#6c4df6;background:linear-gradient(90deg,#6c4df6 0%,#ff4d8d 60%,#ff9f1c 100%);box-shadow:0 4px 18px rgba(108,77,246,.35)}
+.topbar .brand{color:#fff;font-size:1.4rem}
+.topbar .logo{background:#fff;color:#6c4df6;box-shadow:0 3px 10px rgba(0,0,0,.2)}
+.userchip{display:inline-flex;align-items:center;gap:9px;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:5px 15px 5px 5px;color:#fff;font-weight:800}
+.avatar{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#ffd23f;color:#4a2d00;font-weight:900}
+.topbar .ghost{background:#fff;color:#6c4df6;border:0}
+#app>.wrap{padding-top:22px}
+.logo{background:#6c4df6;background:linear-gradient(135deg,#6c4df6,#ff4d8d)}
+.hero{background:#6c4df6;background:linear-gradient(125deg,#4b2bd6 0%,#8a4dff 40%,#ff4d8d 80%,#ff9f1c 100%);box-shadow:0 14px 34px rgba(108,77,246,.35)}
+.hero h1{text-shadow:0 2px 10px rgba(0,0,0,.2)}
+.hero p{color:#fff}
+.panel,.feature,.tool{border:2px solid #ece6ff;box-shadow:0 8px 24px rgba(108,77,246,.12)}
+.feature{border-top-width:6px}
+.feature .emoji{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:16px}
+.grid .feature:nth-child(1){border-top-color:#ff4d8d;background:#fff5f9}.grid .feature:nth-child(1) .emoji{background:#ffd6e6}
+.grid .feature:nth-child(2){border-top-color:#ff9f1c;background:#fff8ec}.grid .feature:nth-child(2) .emoji{background:#ffe3b8}
+.grid .feature:nth-child(3){border-top-color:#12b5a6;background:#effcfa}.grid .feature:nth-child(3) .emoji{background:#c4f1ec}
+.grid .feature:nth-child(4){border-top-color:#2f80ff;background:#f0f6ff}.grid .feature:nth-child(4) .emoji{background:#cfe1ff}
+.grid .feature:nth-child(5){border-top-color:#6c4df6;background:#f4f0ff}.grid .feature:nth-child(5) .emoji{background:#dcd2ff}
+.grid .feature:nth-child(6){border-top-color:#ffc400;background:#fffbea}.grid .feature:nth-child(6) .emoji{background:#fff0a8}
+.tab{border:2px solid #e3dcff;color:#6c4df6}
+.tab.active{background:#6c4df6;background:linear-gradient(90deg,#6c4df6,#2f80ff);color:#fff;border-color:transparent}
+.output{background:#f5f1ff;border:2px dashed #c9bbff}
+.notice{background:#fff3c4;border:1px solid #ffd23f}
+.credit{background:#fff;border:2px solid #ece6ff;border-radius:20px;margin:10px 0;color:#4b4a6a}
+.credit b{color:#ff4d8d}
+.auth{margin:5vh auto}
+.auth .panel{border-top:6px solid #ff4d8d}
+.auth h1{color:#6c4df6}
+@media(max-width:480px){.topbar{padding:10px 12px}.topbar .brand{font-size:1.1rem}}
+
+/* Owner control panel */
+.adminStats{grid-template-columns:repeat(2,minmax(0,1fr))}
+#toolToggles .admin-toggle{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 4px;border-bottom:1px solid var(--line)}
+#toolToggles .admin-toggle:last-child{border-bottom:0}
+#toolToggles input{width:20px;height:20px;accent-color:#6c4df6}
+.adminPane{margin-top:12px}
+#ownerPanel{border-top:6px solid #6c4df6}
+@media(max-width:600px){.adminStats{grid-template-columns:1fr}.top-actions{flex-wrap:wrap;justify-content:flex-end}}
+
+</style>
+</head>
+<body>
+<div id="authBar" class="topbar"><div class="brand"><span class="logo">प</span> पढ़ाईAI</div></div>
+<div id="authScreen" class="wrap auth">
+  <div class="panel">
+    <h1 id="authTitle">Log in</h1>
+    <p id="authSub">Welcome back! Continue your learning journey.</p>
+    <form id="authForm">
+      <div id="nameWrap" class="hidden"><label for="fullName">Your name</label><input class="field" id="fullName" autocomplete="name" placeholder="Enter your name"></div>
+      <label for="email">Email</label><input class="field" id="email" type="email" required autocomplete="email" placeholder="student@example.com">
+      <label for="password">Password</label><input class="field" id="password" type="password" required minlength="4" autocomplete="current-password" placeholder="Enter password">
+      <p id="forgotWrap" style="text-align:right;margin:8px 0 12px"><a href="#" id="forgotLink" style="color:var(--primary);font-weight:800;font-size:14px">Forgot password?</a></p>
+      <button class="primary" id="authSubmit" type="submit" style="width:100%">Log in</button>
+    </form>
+    <p style="text-align:center;margin-top:15px"><span id="switchText">New here?</span> <a href="#" id="switchAuth" style="color:var(--primary);font-weight:800">Create an account</a></p>
+    <p class="small" style="margin-top:18px">Demo account details are stored only in this browser on this device.</p>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+<div class="topbar">
+  <div class="brand"><span class="logo">प</span> पढ़ाईAI</div>
+  <div class="top-actions"><span class="userchip"><span class="avatar" id="avatar">S</span><span id="welcome"></span></span><button class="ghost" id="ownerPanelBtn" type="button">⚙ Owner Panel</button><button class="ghost" id="logoutBtn">Log out</button></div>
+</div>
+<div class="wrap">
+<div id="dashboardHome">
+<section class="hero">
+  <div style="font-weight:800;color:#d8d4ff">YOUR SMART HOMEWORK & EXAM COMPANION</div>
+  <h1>Learn smarter.<br>Feel exam-ready.</h1>
+  <p>Get help with homework, revision, notebook catch-up, answer writing and exam planning — in simple English, Hindi or Hinglish.</p>
+  <div class="actions"><button class="secondary" onclick="showTool('photo')">📷 Ask from a photo</button><button class="ghost" onclick="showTool('revision')">Make revision notes</button></div>
+</section>
+<h2>What पढ़ाईAI can help you with</h2>
+<div class="notice">Offline app: every tool works with no internet and no key. It uses built-in rules, so it checks and organises your text and explains 8 built-in topics. It cannot read photos or write full answers - use the online version for that.</div>
+<div class="grid">
+ <button type="button" class="feature" data-open-tool="mistakes"><div class="emoji">🔎</div><h3>Mistake Pattern Finder</h3><p>Review past answers, spot repeated mistakes and get improvement tips.</p></button>
+ <button type="button" class="feature" data-open-tool="notebook"><div class="emoji">📒</div><h3>Notebook Completion</h3><p>Check notebook photos for missing work and make a catch-up plan.</p></button>
+ <button type="button" class="feature" data-open-tool="answer"><div class="emoji">✍️</div><h3>Answer-Length Controller</h3><p>Get a suggested word count, number of points and diagram guidance.</p></button>
+ <button type="button" class="feature" data-open-tool="revision"><div class="emoji">📄</div><h3>One-Page Chapter Maker</h3><p>Turn a chapter into compact notes with key points and formulas.</p></button>
+ <button type="button" class="feature" data-open-tool="language"><div class="emoji">🌐</div><h3>Multi-Language Explainer</h3><p>Understand topics in English, Hindi or Hinglish with daily-life examples.</p></button>
+ <button type="button" class="feature" data-open-tool="exam"><div class="emoji">⏱️</div><h3>Last-Day Exam Rescue</h3><p>Create an emergency study plan and focus on important topics.</p></button>
+</div>
+<div class="tabs">
+ <button class="tab active" data-tool="photo">📷 Photo Solver</button>
+ <button class="tab" data-tool="mistakes">Mistake Finder</button>
+ <button class="tab" data-tool="notebook">Notebook Check</button>
+ <button class="tab" data-tool="answer">Answer Length</button>
+ <button class="tab" data-tool="revision">Chapter Notes</button>
+ <button class="tab" data-tool="language">Explain Topic</button>
+ <button class="tab" data-tool="exam">Exam Rescue</button>
+</div>
+</div>
+<section id="photoTool" class="tool hidden">
+ <div class="tool-top"><span class="small">PHOTO SOLVER</span><button class="ghost backBtn" type="button">← Back to dashboard</button></div>
+ <h2>📷 Ask a question using a photo</h2><p>Upload a homework image or open your camera. Add a question if you want.</p>
+ <label for="photoInput">Choose image or take a photo</label>
+ <input class="field" id="photoInput" type="file" accept="image/*" capture="environment">
+ <img id="photoPreview" class="preview hidden" alt="Selected question preview">
+ <label for="photoQuestion">What should I solve? (optional)</label>
+ <textarea id="photoQuestion" class="field" rows="3" placeholder="For example: Solve question 4 and explain step by step."></textarea>
+ <label for="photoLang">Answer language</label><select id="photoLang" class="field"><option>English</option><option>Hindi</option><option>Hinglish</option></select>
+ <div class="actions"><button class="primary" id="photoAsk">Get answer</button><button class="ghost" id="clearPhoto">Clear</button><button class="ghost dlBtn hidden" data-out="photoOutput" type="button">⬇ Download answer</button></div>
+ <div id="photoOutput" class="output">Your answer will appear here.</div>
+ </section>
+<section id="textTool" class="tool hidden">
+ <div class="tool-top"><span class="small">STUDY TOOL</span><button class="ghost backBtn" type="button">← Back to dashboard</button></div>
+ <h2 id="textTitle">Study helper</h2><p id="textDesc"></p>
+ <label for="topicInput">Enter your question, topic or past answer</label><textarea id="topicInput" class="field" rows="5" placeholder="Type or paste your chapter, question, or answer here..."></textarea>
+ <div id="extraFields"></div>
+ <div class="actions"><button class="primary" id="generateBtn">Create help</button><button class="ghost" id="clearText">Clear</button><button class="ghost dlBtn hidden" data-out="textOutput" type="button">⬇ Download answer</button></div>
+ <div id="textOutput" class="output">Your study help will appear here.</div>
+</section>
+<div class="credit">Made with ❤️ · Credits: <b>Ansh, Devyansh, Vihaan and Ronak</b> of Class VII-D<br><span class="small">A learning guide, not a cheating tool — understand the steps and learn with confidence.</span></div>
+
+<section id="ownerPanel" class="tool hidden" style="margin-top:18px">
+  <div class="tool-top"><span class="small">PRIVATE WEBSITE MANAGEMENT</span><button class="ghost" id="ownerCloseBtn" type="button">← Back to website</button></div>
+  <h2>⚙ पढ़ाईAI Owner Control Panel</h2>
+  <p>Manage registered accounts and view website-wide visitor statistics.</p>
+  <div class="tabs" id="adminTabs">
+    <button class="tab active" data-admin-tab="overview" type="button">📊 Overview</button>
+    <button class="tab" data-admin-tab="users" type="button">👥 Users</button>
+    <button class="tab" data-admin-tab="tools" type="button">🛠 Study tools</button>
+    <button class="tab" data-admin-tab="appearance" type="button">🎨 Website</button>
+  </div>
+  <div id="adminOverview" class="panel adminPane">
+    <h2>Website overview</h2>
+    <div class="grid adminStats">
+      <div class="feature"><div class="emoji">👥</div><h3 id="statUsers">0</h3><p>Registered accounts in this browser</p></div>
+      <div class="feature"><div class="emoji">👀</div><h3 id="statVisits">—</h3><p>Website-wide page views</p></div>
+      <div class="feature"><div class="emoji">🧑‍💻</div><h3 id="statVisitors">—</h3><p>Unique visitor browsers worldwide</p></div>
+      <div class="feature"><div class="emoji">🧰</div><h3 id="statTools">7</h3><p>Study tools available</p></div>
+      <div class="feature"><div class="emoji">🔒</div><h3>Owner only</h3><p>Admin panel access</p></div>
+    </div>
+    <div class="panel" style="margin-top:14px">
+      <h3>🌐 Global visitor statistics</h3>
+      <p>Connect this panel to the Cloudflare database to see visits from all devices and browsers.</p>
+      <label for="cloudOwnerKey">Cloudflare owner statistics key</label>
+      <input id="cloudOwnerKey" class="field" type="password" autocomplete="off" placeholder="Enter the key configured in Cloudflare">
+      <div class="actions">
+        <button class="primary" id="loadGlobalStatsBtn" type="button">↻ Load global statistics</button>
+        <span id="globalStatsStatus" class="small" aria-live="polite">Not connected yet</span>
+      </div>
+      <p class="small">Visitor tracking uses a random browser ID. It does not store visitor names, emails, or raw IP addresses. One person using several browsers may count as multiple unique browsers.</p>
+    </div>
+  </div>
+  <div id="adminUsers" class="panel adminPane hidden">
+    <h2>Student accounts</h2><p>Registered accounts saved by this copy of पढ़ाईAI in this browser. Passwords are never displayed or exported.</p>
+    <div class="actions">
+      <input id="userSearch" class="field" style="max-width:320px;margin:0" type="search" placeholder="Search name or email">
+      <button class="ghost" id="refreshUsersBtn" type="button">↻ Refresh</button>
+      <button class="primary" id="exportUsersBtn" type="button">⬇ Export account list</button>
+    </div>
+    <div id="userList" class="output">No accounts found.</div>
+  </div>
+  <div id="adminTools" class="panel adminPane hidden">
+    <h2>Study tool visibility</h2><p>Switch tools on or off on the student dashboard.</p>
+    <div id="toolToggles"></div>
+  </div>
+  <div id="adminAppearance" class="panel adminPane hidden">
+    <h2>Website appearance and welcome text</h2>
+    <label for="siteTitleInput">Website name</label><input id="siteTitleInput" class="field" maxlength="40" value="पढ़ाईAI">
+    <label for="welcomeTextInput">Welcome headline</label><input id="welcomeTextInput" class="field" maxlength="100" value="Learn smarter. Feel exam-ready.">
+    <label for="themeChoice">Colour theme</label>
+    <select id="themeChoice" class="field"><option value="purple">Purple + Pink</option><option value="blue">Blue</option><option value="green">Green</option></select>
+    <div class="actions"><button class="primary" id="saveSiteSettings" type="button">Save website settings</button><button class="ghost" id="resetSiteSettings" type="button">Reset settings</button></div>
+    <p id="settingsMessage" class="small"></p>
+  </div>
+</section>
+</div>
+</div>
+<div id="ownerGate" style="position:fixed;inset:0;z-index:9999;background:#17152bcc;display:none;align-items:center;justify-content:center;padding:18px">
+  <div class="panel" style="width:min(440px,100%);padding:26px">
+    <h2 id="ownerGateTitle">Owner access</h2>
+    <p id="ownerGateInfo">Set a private owner password to protect the control panel on this browser.</p>
+    <form id="ownerGateForm">
+      <label for="ownerPassword">Owner password</label><input id="ownerPassword" class="field" type="password" minlength="8" required autocomplete="current-password" placeholder="At least 8 characters">
+      <div class="actions"><button class="primary" id="ownerGateSubmit" type="submit">Continue</button><button class="ghost" id="ownerGateCancel" type="button">Cancel</button></div>
+      <p class="small">Owner password is stored as a hash in this browser. This protects the local panel from casual access, but is not server-side security for a public website.</p>
+    </form>
+  </div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+
+const DONE={};
+const ONLINE='https://claude.ai/artifact/1sdDdiFrW7gfDfpr3pkTXb';
+function show(out,txt){out.textContent=txt;DONE[out.id]=txt}
+function needsOnline(out,name){out.textContent=name+' needs real AI, so it cannot run in this offline app.\n\nOpen the online version (needs internet and a claude.ai login):\n'+ONLINE;DONE[out.id]=''}
+document.querySelectorAll('.dlBtn').forEach(b=>{b.classList.remove('hidden');b.onclick=()=>{let id=b.dataset.out,txt=DONE[id];if(!txt)return alert('Get an answer first, then you can download it.');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['PadhaiAI\n========\n\n'+txt+'\n'],{type:'text/plain'}));a.download='padhaiAI-'+(id==='photoOutput'?'photo-answer':(selectedTool||'study'))+'.txt';document.body.appendChild(a);a.click();document.body.removeChild(a)}});
+const TOPICS=[
+{k:['photosynth','chlorophyll'],n:'Photosynthesis',
+en:{d:'Photosynthesis is the process by which green plants make their own food from sunlight, water and carbon dioxide.',p:['It happens mainly in the leaves, inside chloroplasts that contain the green pigment chlorophyll.','Plants take in carbon dioxide through tiny holes called stomata and water through the roots.','Sunlight gives the energy to turn these into glucose (food) and oxygen.','Word equation: carbon dioxide + water (sunlight, chlorophyll) -> glucose + oxygen.'],e:'A plant kept in a dark room turns pale and weak because it cannot make food without light.'},
+hi:{d:'Photosynthesis woh process hai jisme hare paudhe sunlight, paani aur carbon dioxide se apna khana khud banate hain.',p:['Yeh mainly patton me hota hai, chloroplast ke andar, jisme hara rang dene wala chlorophyll hota hai.','Paudha stomata (patton ke chhote chhed) se carbon dioxide aur jadon se paani leta hai.','Sunlight ki energy se yeh glucose (khana) aur oxygen ban jaate hain.','Equation: carbon dioxide + paani (sunlight, chlorophyll) -> glucose + oxygen.'],e:'Andhere kamre me rakha paudha peela aur kamzor ho jata hai, kyunki bina roshni ke woh khana nahi bana pata.'}},
+{k:['water cycle','evaporation','condensation','precipitation'],n:'Water Cycle',
+en:{d:'The water cycle is the continuous movement of water between the Earth\'s surface and the atmosphere.',p:['Evaporation: the Sun heats water in oceans, rivers and lakes and it rises as water vapour.','Condensation: the vapour cools high up and forms tiny droplets, making clouds.','Precipitation: the droplets join, become heavy and fall as rain, snow or hail.','The water collects in rivers, lakes and the ground, and the cycle repeats.'],e:'Wet clothes dry in the sun because their water evaporates; a cold glass "sweats" because water vapour in the air condenses on it.'},
+hi:{d:'Water cycle ka matlab hai paani ka dharti aur hawa ke beech lagatar ghoomte rehna.',p:['Evaporation: Suraj ki garmi se samudra, nadi aur talab ka paani bhaap banke upar uthta hai.','Condensation: Upar thandi hawa me bhaap chhoti boondon me badalkar badal banati hai.','Precipitation: Boondein bhaari hokar baarish, barf ya ole ban ke girti hain.','Yeh paani nadi, talab aur zameen me jama hota hai aur cycle dobara shuru ho jata hai.'],e:'Geele kapde dhoop me isliye sukhte hain kyunki unka paani evaporate ho jata hai; thande glass par boondein hawa ki bhaap ke condense hone se bantee hain.'}},
+{k:['gravity','gravitation'],n:'Gravity',
+en:{d:'Gravity is the force with which the Earth (or any object with mass) pulls other objects towards itself.',p:['It is why things fall to the ground when we drop them.','The bigger the mass of an object, the stronger its pull; the Earth\'s pull keeps us on the ground and the Moon in orbit.','Gravity gives us weight: weight = mass x gravitational acceleration (about 9.8 m/s2 on Earth).','The Moon\'s gravity is about one-sixth of Earth\'s, so things weigh less there.'],e:'A ball thrown up comes back down, and a fruit falls from a tree.'},
+hi:{d:'Gravity woh force hai jisse Earth (ya koi bhi bhaari cheez) doosri cheezon ko apni taraf kheenchti hai.',p:['Isiliye koi cheez chhodne par neeche zameen par girti hai.','Jitna zyada mass, utna zyada pull; Earth ka pull hume zameen par aur Moon ko orbit me rakhta hai.','Gravity se weight milta hai: weight = mass x gravitational acceleration (Earth par lagbhag 9.8 m/s2).','Moon par gravity Earth ki lagbhag ek-chhathi hoti hai, isliye wahan cheezein halki lagti hain.'],e:'Upar phenki gayi gend wapas neeche aati hai aur ped se phal neeche girta hai.'}},
+{k:['states of matter','solid, liquid','solid liquid','matter'],n:'States of Matter',
+en:{d:'Matter is anything that has mass and takes up space. It mostly exists as a solid, a liquid or a gas.',p:['Solid: fixed shape and fixed volume, particles tightly packed (example: ice).','Liquid: no fixed shape but fixed volume, takes the shape of its container (example: water).','Gas: no fixed shape and no fixed volume, spreads to fill the container (example: steam, air).','Heating or cooling can change the state: melting, freezing, evaporation and condensation.'],e:'Ice melts into water when heated, and the water turns into steam when it boils.'},
+hi:{d:'Matter woh hai jiska mass hota hai aur jo jagah gherta hai. Yeh mostly solid, liquid ya gas hota hai.',p:['Solid: shape aur volume fixed, particles paas-paas (jaise ice).','Liquid: shape fixed nahi par volume fixed, bartan ki shape le leta hai (jaise paani).','Gas: shape aur volume dono fixed nahi, poore bartan me phail jaati hai (jaise steam, hawa).','Garam ya thanda karne se state badal sakti hai: melting, freezing, evaporation aur condensation.'],e:'Ice garam karne par paani ban jata hai aur ubalne par paani steam ban jata hai.'}},
+{k:['fraction'],n:'Fractions',
+en:{d:'A fraction shows a part of a whole and is written as numerator/denominator.',p:['The denominator (bottom) says into how many equal parts the whole is divided; the numerator (top) says how many parts are taken.','Like fractions (same denominator): add or subtract the numerators and keep the denominator.','Unlike fractions: first make the denominators equal using the LCM, then add or subtract.','To multiply, multiply numerators together and denominators together; to divide, multiply by the reciprocal.'],e:'If a pizza is cut into 8 equal slices and you eat 3, you have eaten 3/8 of it.'},
+hi:{d:'Fraction kisi poore ka ek hissa dikhata hai aur numerator/denominator ki tarah likha jata hai.',p:['Denominator (neeche) batata hai ki poora kitne barabar hisso me banta hai; numerator (upar) batata hai ki kitne hisse liye.','Like fractions (same denominator): numerators ko jodo ya ghatao, denominator wahi rakho.','Unlike fractions: pehle LCM se denominators barabar karo, phir jodo ya ghatao.','Multiply me numerators ko numerators se aur denominators ko denominators se multiply karo; divide me reciprocal se multiply karo.'],e:'Agar pizza 8 barabar slices me kata hai aur tumne 3 khaye, to tumne 3/8 pizza khaya.'}},
+{k:['circuit','electric current','electricity'],n:'Electric Circuit',
+en:{d:'An electric circuit is a closed path along which electric current flows.',p:['A simple circuit has a cell (source), wires, a bulb (or other device) and a switch.','Current flows only when the circuit is closed (switch ON); an open circuit (switch OFF) stops the flow.','Materials that let current pass are conductors (like metals); those that do not are insulators (like plastic and rubber).','Never touch bare wires or sockets with wet hands - electricity can be dangerous.'],e:'Switching on a torch closes its circuit, so the bulb glows.'},
+hi:{d:'Electric circuit ek band raasta hai jisme se electric current behta hai.',p:['Simple circuit me cell (source), taar, bulb (ya koi device) aur switch hota hai.','Current tabhi behta hai jab circuit closed ho (switch ON); open circuit (switch OFF) me current ruk jata hai.','Jo cheezein current guzarne deti hain woh conductors (jaise metal) aur jo nahi deti woh insulators (jaise plastic, rubber) hain.','Khule taar ya socket ko geele haath se kabhi mat chhuo - bijli khatarnak ho sakti hai.'],e:'Torch ka switch ON karne par circuit close hota hai aur bulb jalta hai.'}},
+{k:['digest'],n:'Digestive System',
+en:{d:'The digestive system breaks food into simple substances that the body can absorb and use.',p:['Food passes through: mouth, oesophagus, stomach, small intestine, large intestine and rectum.','Mouth: teeth chew food and saliva starts digesting starch.','Stomach: acid and enzymes digest food, mainly proteins.','Small intestine: digestion is completed and nutrients enter the blood; the large intestine absorbs water.'],e:'If you chew a piece of roti for a while it starts to taste slightly sweet, because saliva turns starch into sugar.'},
+hi:{d:'Digestive system khaane ko aisi simple cheezon me todta hai jo sharir absorb karke use kar sake.',p:['Khaana is raste se jata hai: mouth, oesophagus, stomach, small intestine, large intestine aur rectum.','Mouth: daant khaana chabate hain aur saliva starch ko digest karna shuru karti hai.','Stomach: acid aur enzymes khaane ko, khaas kar protein ko, digest karte hain.','Small intestine me digestion poora hota hai aur nutrients blood me jaate hain; large intestine paani absorb karti hai.'],e:'Roti ko der tak chabane par woh thodi meethi lagti hai, kyunki saliva starch ko sugar me badal deti hai.'}},
+{k:['democra'],n:'Democracy',
+en:{d:'Democracy is a system of government in which people choose their rulers by voting.',p:['Every adult citizen has the right to vote, and every vote counts equally.','Elected representatives make laws and decisions on behalf of the people.','Rights such as freedom of speech and equality are protected.','India is the world\'s largest democracy.'],e:'In a school election students vote to choose a class monitor, and the choice of the majority leads the class.'},
+hi:{d:'Democracy aisi sarkar hai jisme log vote dekar apne neta khud chunte hain.',p:['Har adult citizen ko vote dene ka haq hai aur har vote barabar ginta hai.','Chune hue representatives janta ke liye kanoon aur faisle banate hain.','Bolne ki azaadi aur barabari jaise adhikaar surakshit rehte hain.','India duniya ki sabse badi democracy hai.'],e:'School election me bachche vote dekar class monitor chunte hain aur zyada logon ki pasand class ko lead karti hai.'}}
+];
+function explainTopic(q,lang){
+ let low=(q||'').toLowerCase(),t=null;
+ for(let i=0;i<TOPICS.length&&!t;i++){for(let j=0;j<TOPICS[i].k.length;j++){if(low.indexOf(TOPICS[i].k[j])>-1){t=TOPICS[i];break}}}
+ if(!t)return null;
+ let en=(lang||'English')==='English',c=en?t.en:t.hi;
+ let o=t.n.toUpperCase()+' - simple explanation ('+(lang||'English')+')\n\n';
+ if(lang==='Hindi')o+='(Offline version: Hindi is shown in Hinglish.)\n\n';
+ o+=(en?'In simple words: ':'Simple words me: ')+c.d+'\n\n'+(en?'Key points:':'Mukhya points:')+'\n';
+ c.p.forEach((x,i)=>{o+=(i+1)+'. '+x+'\n'});
+ o+='\n'+(en?'Daily-life example: ':'Roz ki zindagi ka example: ')+c.e+'\n\n'+(en?'Tip: close the book and say these points in your own words.':'Tip: book band karke yeh points apne shabdon me bolo.');
+ return o}
+function noTopic(q){return 'I do not have a built-in explanation for this topic in the offline app.\n\nBuilt-in topics: Photosynthesis, Water Cycle, Gravity, States of Matter, Fractions, Electric Circuit, Digestive System, Democracy.\n\nFor any other topic, use the online version:\n'+ONLINE+'\n\nMeanwhile, try this method: (1) write the definition in one line, (2) list 3-4 key points, (3) add one daily-life example, (4) explain it aloud to someone.'}
+function splitSents(x){return (x.match(/[^.!?]+(?:[.!?]+|$)/g)||[]).map(y=>y.trim())}
+function sentencesOf(t){let out=[];t.split(/\n/).forEach(l=>{l=l.trim();if(!l)return;if(l.length<60&&!/[.!?,;]$/.test(l))return;if(l.indexOf('=')>-1&&l.length<120)return;splitSents(l).forEach(s=>{if(s.length>15)out.push(s)})});return out}
+function chapterNotes(text){
+ let t=text.trim(),words=t.split(/\s+/).length;
+ if(words<25)return 'ONE-PAGE NOTES TEMPLATE for "'+t+'"\n\nPaste the chapter text (at least a few paragraphs) to get notes from it. Offline, I can only pick out lines from the text you give me - I cannot add facts of my own.\n\nUse this layout in your notebook:\n1. Chapter name and main idea (1 line)\n2. Key terms and definitions\n3. Important points (5-8 short lines)\n4. Formulas / diagrams\n5. Examples\n6. Likely exam questions';
+ let lines=t.split(/\n/).map(x=>x.trim()).filter(Boolean),heads=[],forms=[],defs=[];
+ lines.forEach(l=>{if(l.length<60&&!/[.!?,;]$/.test(l)&&l.split(' ').length<=8&&l.indexOf('=')<0)heads.push(l);if(l.indexOf('=')>-1&&l.length<120)forms.push(l)});
+ let sents=sentencesOf(t),defRe=/\b(is called|are called|is known as|are known as|means|refers to|is defined as|is a|is the|are the)\b/i;
+ sents.forEach(s=>{if(defRe.test(s)&&s.split(' ').length<=30&&defs.indexOf(s)<0)defs.push(s)});
+ let score=sents.map((s,i)=>{let sc=0;if(defRe.test(s))sc+=3;if(/\d/.test(s))sc+=1;if(/\b(important|note|therefore|because|example|first|main|mainly)\b/i.test(s))sc+=2;if(i<3)sc+=2;if(s.split(' ').length>40)sc-=3;return {s:s,i:i,sc:sc}});
+ let top=score.slice().sort((a,b)=>b.sc-a.sc).slice(0,8).sort((a,b)=>a.i-b.i).map(x=>x.s);
+ let o='ONE-PAGE CHAPTER NOTES\n(made only from the text you pasted - please check them against your book)\n\n';
+ if(heads.length)o+='HEADINGS / TOPICS\n'+heads.slice(0,10).map(x=>'- '+x).join('\n')+'\n\n';
+ if(defs.length)o+='DEFINITIONS / KEY TERMS\n'+defs.slice(0,5).map(x=>'- '+x).join('\n')+'\n\n';
+ o+='KEY POINTS\n'+top.map((x,i)=>(i+1)+'. '+x).join('\n')+'\n\n';
+ if(forms.length)o+='FORMULAS\n'+forms.slice(0,8).map(x=>'- '+x).join('\n')+'\n\n';
+ o+='Revise: read these once, cover the page and recall each point.';
+ return o}
+function mistakeFinder(text){
+ let ans=text.split(/\n\s*\n|\n-{3,}\n/).map(x=>x.trim()).filter(Boolean);
+ if(ans.length===1){let p=text.split(/\n/).map(x=>x.trim()).filter(Boolean);if(p.length>1&&p.every(x=>x.length<400))ans=p}
+ let spell={recieve:'receive',definately:'definitely',seperate:'separate',wich:'which',becuase:'because',becasue:'because',teh:'the',adress:'address',occured:'occurred',enviroment:'environment',goverment:'government',tommorow:'tomorrow',untill:'until',wierd:'weird',freind:'friend',beleive:'believe',accomodate:'accommodate',necesary:'necessary',thier:'their',alot:'a lot',writting:'writing',diffrent:'different',importent:'important',sentance:'sentence'};
+ let counts={},rep='';
+ function add(k,msg,i){counts[k]=(counts[k]||0)+1;rep+='  - '+msg+'\n'}
+ ans.forEach((a,i)=>{rep+='Answer '+(i+1)+': '+(a.length>60?a.slice(0,57)+'...':a)+'\n';let before=rep.length,w=a.split(/\s+/),low=a.toLowerCase();
+  if(w.length<8&&!/\d/.test(a))add('short','Very short ('+w.length+' words). Add a definition, a point or an example.',i);
+  if(/^[a-z]/.test(a))add('caps','Starts with a small letter. Begin with a capital letter.',i);
+  if(!/[.!?)\]"\u2019']$/.test(a)&&!/\d$/.test(a))add('stop','No full stop at the end.',i);
+  if(/\bi\b/.test(a.replace(/\bi\.e\b/gi,'')))add('pronoun','The word "I" should be a capital letter.',i);
+  let dup=a.match(/\b(\w+)\s+\1\b/i);if(dup&&!/^\d+$/.test(dup[1]))add('dup','Repeated word: "'+dup[1]+' '+dup[1]+'".',i);
+  let sp=[];Object.keys(spell).forEach(k=>{if(new RegExp('\\b'+k+'\\b','i').test(a))sp.push(k+' -> '+spell[k])});if(sp.length)add('spell','Spelling: '+sp.join(', ')+'.',i);
+  let sents=splitSents(a);if(sents.some(s=>s.split(/\s+/).length>35))add('long','A sentence is very long. Break it into two shorter sentences.',i);
+  if(/\d/.test(a)&&w.length<=6&&!/(cm|mm|km|kg|\bg\b|\bm\b|\bs\b|ml|\bl\b|\u00b0|%|rs|\u20b9|\bn\b|\bj\b|years?|days?|hours?|minutes?)/i.test(a))add('unit','Numerical answer without a unit or steps. Show Given -> Formula -> Steps -> Answer with unit.',i);
+  if(/  +/.test(a))add('space','Extra spaces between words.',i);
+  if(rep.length===before)rep+='  - No obvious writing mistakes found.\n';rep+='\n'});
+ let o='MISTAKE PATTERN FINDER\n('+ans.length+' answer'+(ans.length>1?'s':'')+' checked for spelling, punctuation, length, units and steps. It cannot check if the facts are correct.)\n\n'+rep;
+ let tips={short:'Write at least 3 points for 3+ mark questions.',caps:'Check every sentence begins with a capital letter.',stop:'End every sentence with a full stop.',pronoun:'Always write "I" as a capital.',dup:'Re-read each answer once to catch repeated words.',spell:'Keep a small list of words you misspell and revise it daily.',long:'Aim for sentences under 20 words.',unit:'Always write the unit with the final answer.',steps:'Write Given, Formula, Steps and Answer for numericals.',space:'Leave only one space between words.'};
+ let keys=Object.keys(counts).sort((a,b)=>counts[b]-counts[a]);
+ if(!keys.length)return o+'PATTERNS\nNo repeated mistakes found. Great! Ask a teacher to check the facts and the explanation.';
+ o+='REPEATED PATTERNS (most common first)\n'+keys.map(k=>'- '+k+': '+counts[k]+' time(s)').join('\n')+'\n\nTOP IMPROVEMENT TIPS\n'+keys.slice(0,3).map((k,i)=>(i+1)+'. '+tips[k]).join('\n');
+ return o}
+
+function parseMins(t){t=(t||'').toLowerCase();let m=0,found=false,re=/(\d+(?:\.\d+)?)\s*(days?|d|hours?|hrs?|hr|h|minutes?|mins?|min|m)\b/g,x;while((x=re.exec(t))){found=true;let n=parseFloat(x[1]),u=x[2].charAt(0);m+=u==='d'?n*480:u==='h'?n*60:n}if(!found){let p=parseFloat(t);if(p>0)m=p<=24?p*60:p}return Math.round(m)}
+function fm(m){return Math.floor(m/60)+':'+('0'+(m%60)).slice(-2)}
+function examPlan(input,timeText){
+ let T=parseMins(timeText);if(!T)return null;
+ let lines=input.split(/\n/).map(x=>x.trim()).filter(Boolean),subj='';
+ if(lines[0].indexOf(':')>-1){let f=lines[0],c=f.indexOf(':');subj=f.slice(0,c).trim();lines[0]=f.slice(c+1)}
+ else if(lines.length>1){subj=lines.shift()}
+ let topics=lines.join(',').split(/[,;]/).map(x=>x.trim()).filter(Boolean);
+ if(!topics.length)topics=[subj||'Your topics'];
+ let head='LAST-DAY EXAM RESCUE'+(subj?' - '+subj:'')+'\nTime available: '+fm(T)+' (hours:minutes)\n\n';
+ if(T<30)return head+'Very little time! Do only this:\n1. Read the headings, definitions and formulas of: '+topics.slice(0,2).join(' and ')+'.\n2. Say 3 key points out loud without looking.\n3. Skip long practice - then stay calm and sleep/rest well.';
+ let selfTest=Math.max(5,Math.round(T*0.15)),fin=Math.max(5,Math.round(T*0.1)),study=T-selfTest-fin,brk=Math.floor(study/45)*5,net=study-brk;
+ let maxT=Math.max(1,Math.floor(net/10)),used=topics.slice(0,maxT),skipped=topics.slice(maxT),n=used.length,w=[],sum=0;
+ for(let i=0;i<n;i++){w.push(n-i+1);sum+=n-i+1}
+ let mins=w.map(x=>Math.max(5,Math.round(net*x/sum))),out=[],cur=0,since=0;
+ used.forEach((tp,ti)=>{let m=mins[ti],parts=m>50?[Math.ceil(m/2),Math.floor(m/2)]:[m];parts.forEach((ch,p)=>{let act=parts.length===1?'read, make short notes, then answer 2 questions from memory':(p===0?'read and understand, underline key terms':'write short notes and practise; then close the book and answer 2 questions from memory');out.push(fm(cur)+' - '+fm(cur+ch)+'  '+tp+': '+act);cur+=ch;since+=ch;if(since>=40&&!(ti===n-1&&p===parts.length-1)){out.push(fm(cur)+' - '+fm(cur+5)+'  Break: drink water, stretch, no phone');cur+=5;since=0}})});
+ out.push(fm(cur)+' - '+fm(cur+selfTest)+'  Self-test: write answers to 3-5 questions from the topics above without looking');cur+=selfTest;
+ out.push(fm(cur)+' - '+fm(cur+fin)+'  Final revision: read only your notes, formulas and mistakes');
+ let tail='\n\nTips: topics are planned in the order you typed them, with more time for the first ones. Type the most important or weakest topic first.';
+ if(skipped.length)tail+='\nNot enough time for: '+skipped.join(', ')+'. Read their headings and definitions only if time is left.';
+ return head+out.join('\n')+tail}
+function answerGuide(q,cls){
+ let low=q.toLowerCase(),marks=0,inferred=false,mm=low.match(/(\d+)\s*(marks?|m\b)/);if(mm)marks=parseInt(mm[1],10);
+ if(!marks){inferred=true;if(/\b(discuss|elaborate|essay|in detail|evaluate|analy[sz]e)\b/.test(low))marks=5;else if(/\b(explain|describe|why|how|distinguish|differentiate|difference|compare|justify)\b/.test(low))marks=3;else if(/\b(define|what is|what are|name|state|list|who|when|where|full form)\b/.test(low))marks=1;else marks=3}
+ let tbl={1:['10-20 words','1 line','1 short sentence or keyword'],2:['30-50 words','2-3 lines','2 points'],3:['60-80 words','5-6 lines','3 points'],4:['80-100 words','7-8 lines','4 points'],5:['100-150 words','10-12 lines','5 points'],6:['150-200 words','14-16 lines','6 points']};
+ let r=tbl[Math.min(marks,6)]||tbl[3],o='ANSWER-LENGTH GUIDE'+(cls?' ('+cls+')':'')+'\n\nQuestion: '+q+'\n\n';
+ o+='Marks: '+marks+(inferred?' (guessed from the question - add "5 marks" in your question to be exact)':'')+'\nSuggested length: '+r[0]+' / '+r[1]+'\nNumber of points: '+r[2]+'\nTime to spend: about '+Math.max(1,Math.round(marks*1.2))+' minute(s)\n\n';
+ let diag=/\b(draw|diagram|label|sketch|figure|circuit|map|cycle|structure|process)\b/.test(low);
+ o+='Diagram: '+(diag?'YES - draw a neat, labelled diagram with a pencil and give it a title.':'Only if it helps. Not needed unless the question asks for one.')+'\n';
+ if(/\b(difference|differentiate|distinguish|compare)\b/.test(low))o+='Format: use a 2-column table, one row for each point of difference.\n';
+ else if(/\b(calculate|solve|prove|derive|simplify|evaluate|find)\b/.test(low))o+='Format: write Given -> Formula -> Substitution/steps -> Answer with unit. Steps carry marks.\n';
+ else if(marks<=1)o+='Format: answer directly in one line - no introduction.\n';
+ else o+='Format: 1 line of introduction/definition -> '+(marks>2?marks-2:1)+' key points (each on a new line, key words underlined) -> 1 line of conclusion or example.\n';
+ o+='\nNote: this offline guide tells you how long and how to write the answer. It cannot write the answer itself - use the online version for that.';
+ return o}
+function notebookPlan(input){
+ let items=input.split(/\n|;/).map(x=>x.trim()).filter(Boolean),done=[],pend=[],unk=[];
+ items.forEach(it=>{let l=it.toLowerCase();if(/(pending|missing|not done|not complete|incomplete|left|todo|to do|to-do|absent|yet to|remaining|backlog|not written|\u2717|\u274c)/.test(l))pend.push(it);else if(/(done|complete|finished|written|checked|\u2713|\u2714|\u2705)/.test(l))done.push(it);else unk.push(it)});
+ let o='NOTEBOOK CATCH-UP CHECKLIST\n\n';
+ o+='PENDING ('+pend.length+')\n'+(pend.length?pend.map(x=>'[ ] '+x).join('\n'):'None found')+'\n\n';
+ o+='CHECK IN YOUR NOTEBOOK ('+unk.length+') - status not clear\n'+(unk.length?unk.map(x=>'[?] '+x).join('\n'):'None')+'\n\n';
+ o+='DONE ('+done.length+')\n'+(done.length?done.map(x=>'[x] '+x).join('\n'):'None')+'\n\n';
+ let todo=pend;
+ if(!todo.length){o+='No pending work found in what you typed. Still, flip through your notebook once and check the "?" items.';return o}
+ o+='CATCH-UP PLAN (3 items a day, about 25 minutes each, oldest work first)\n';
+ for(let d=0;d*3<todo.length;d++){o+='Day '+(d+1)+': '+todo.slice(d*3,d*3+3).join(' | ')+'\n'}
+ o+='\nTip: finish one item fully before starting the next, and tick it off in your notebook.';
+ return o}
+
+let mode='login', currentUser=null, selectedTool='photo';
+function users(){try{return JSON.parse(localStorage.getItem('padhai_users')||'{}')}catch{return {}}}
+// Website-wide visitor tracking: requires the Cloudflare Pages Function + D1 database.
+function getVisitorId(){
+ try{
+  let id=localStorage.getItem('padhai_global_visitor_id');
+  if(!id){id='pv-'+(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));localStorage.setItem('padhai_global_visitor_id',id);}
+  return id;
+ }catch(e){return 'pv-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);}
+}
+async function recordVisitor(){
+ try{
+  await fetch('/api/visit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({visitorId:getVisitorId()}),keepalive:true});
+ }catch(e){console.info('Global visitor tracking is not connected yet.');}
+}
+async function updateGlobalVisitorStats(){
+ const status=$('globalStatsStatus'), key=$('cloudOwnerKey')?.value?.trim();
+ if(!key){if(status)status.textContent='Enter the Cloudflare owner statistics key first.';return;}
+ if(status)status.textContent='Loading global statistics…';
+ try{
+  const r=await fetch('/api/stats',{headers:{'X-Owner-Key':key}});
+  const data=await r.json();
+  if(!r.ok)throw new Error(data.error||'Could not load statistics');
+  $('statVisits').textContent=Number(data.pageViews||0).toLocaleString();
+  $('statVisitors').textContent=Number(data.uniqueBrowsers||0).toLocaleString();
+  if(status)status.textContent='Updated '+new Date().toLocaleTimeString();
+  sessionStorage.setItem('padhai_cloud_owner_key',key);
+ }catch(e){if(status)status.textContent=e.message+' — check Cloudflare setup.';}
+}
+recordVisitor();
+
+function setMode(m){mode=m;let t={login:['Log in','Welcome back! Continue your learning journey.','Log in'],signup:['Create an account','Create your student account to get started.','Create account'],reset:['Reset password','Enter your email, the name you signed up with, and a new password.','Reset password']}[m];$('authTitle').textContent=t[0];$('authSub').textContent=t[1];$('authSubmit').textContent=t[2];$('nameWrap').classList.toggle('hidden',m==='login');$('fullName').required=(m==='signup'||m==='reset');$('forgotWrap').classList.toggle('hidden',m!=='login');$('switchText').textContent=m==='signup'?'Already have an account?':(m==='reset'?'Remembered it?':'New here?');$('switchAuth').textContent=m==='login'?'Create an account':'Log in';$('password').placeholder=m==='reset'?'Enter new password':'Enter password';$('password').autocomplete=m==='login'?'current-password':'new-password'}
+$('forgotLink').onclick=e=>{e.preventDefault();setMode('reset')};
+$('switchAuth').onclick=e=>{e.preventDefault();setMode(mode==='login'?'signup':'login')};
+$('authForm').onsubmit=e=>{e.preventDefault();let email=$('email').value.trim().toLowerCase(),pass=$('password').value,u=users();if(mode==='reset'){let nm=$('fullName').value.trim().toLowerCase();if(!u[email]||(u[email].name||'').trim().toLowerCase()!==nm)return alert('We could not match that email and name. Please check and try again.');u[email].password=pass;localStorage.setItem('padhai_users',JSON.stringify(u));$('password').value='';$('fullName').value='';setMode('login');return alert('Password updated! Please log in with your new password.')}if(mode==='signup'){if(u[email])return alert('An account with this email already exists. Please log in.');u[email]={password:pass,name:$('fullName').value.trim()||'Student',createdAt:new Date().toISOString()};localStorage.setItem('padhai_users',JSON.stringify(u));login(email,u[email].name)}else{if(!u[email]||u[email].password!==pass)return alert('Email or password is incorrect.');login(email,u[email].name)}};
+function login(email,name){currentUser={email,name};sessionStorage.setItem('padhai_session',JSON.stringify(currentUser));$('authScreen').classList.add('hidden');$('authBar').classList.add('hidden');$('app').classList.remove('hidden');$('welcome').textContent=name;$('avatar').textContent=(name.charAt(0)||'S').toUpperCase();$('ownerPanelBtn').classList.toggle('hidden',email.toLowerCase()!=='devyanshh@outlook.com')}
+function logout(){sessionStorage.removeItem('padhai_session');currentUser=null;$('ownerPanel').classList.add('hidden');$('ownerPanelBtn').classList.remove('hidden');$('app').classList.add('hidden');$('authScreen').classList.remove('hidden');$('authBar').classList.remove('hidden');$('password').value='';setMode('login')}
+$('logoutBtn').onclick=logout;
+try{let s=JSON.parse(sessionStorage.getItem('padhai_session')||'null');if(s)login(s.email,s.name)}catch{}
+const descriptions={
+ mistakes:['Mistake Pattern Finder','Paste a few answers (leave a blank line between them). It checks spelling, punctuation, length, units and steps, and finds repeated patterns.','Compare answers and suggest repeated error patterns, then give 3 practical improvement tips. Do not invent errors that are not visible.'],
+ notebook:['Notebook Completion Assistant','Type one item per line with its status, like: Maths ex 3.2 - pending, or Science ch 4 - done.','Make a simple catch-up checklist from the details given. Clearly mark anything that needs the student to check in their notebook.'],
+ answer:['Answer-Length Controller','Type the question, with its marks if you know them (for example 5 marks), and your class.','Suggest a suitable answer length, number of points, and whether a diagram is useful. Then provide a model answer appropriate for a school student.'],
+ revision:['One-Page Chapter Maker','Paste the chapter text (a few paragraphs). It picks out headings, definitions, key points and formulas from your text.','Create concise one-page revision notes with headings, key points, definitions and formulas where relevant. Do not claim facts that are not in the supplied text.'],
+ language:['Multi-Language Explainer','Type a topic (Photosynthesis, Water Cycle, Gravity, States of Matter, Fractions, Electric Circuit, Digestive System or Democracy) and pick a language.','Explain the topic in the selected language using simple words and a daily-life example.'],
+ exam:['Last-Day Exam Rescue Mode','Type the subject and chapters (most important first, separated by commas or new lines) and the time left, like 3 hours.','Create a realistic emergency revision timetable. Prioritise topics the student provides, include short breaks and quick self-tests.']
+};
+function showTool(t){
+ selectedTool=t;
+ $('dashboardHome').classList.add('hidden');
+ $('photoTool').classList.toggle('hidden',t!=='photo');
+ $('textTool').classList.toggle('hidden',t==='photo');
+ document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tool===t));
+ if(t!=='photo'){
+  let d=descriptions[t];
+  $('textTitle').textContent=d[0];
+  $('textDesc').textContent=d[1];
+  $('topicInput').placeholder=t==='mistakes'?'Paste 2–5 previous answers here...':'Type or paste here...';
+  $('extraFields').innerHTML=t==='language'?'<label for="languageChoice">Language</label><select id="languageChoice" class="field"><option>English</option><option>Hindi</option><option>Hinglish</option></select>':t==='answer'?'<label for="classChoice">Class / grade</label><input id="classChoice" class="field" placeholder="e.g. Class VII">':t==='exam'?'<label for="timeChoice">Time left</label><input id="timeChoice" class="field" placeholder="e.g. 1 day / 3 hours">':'';
+  $('textOutput').textContent='Your study help will appear here.';
+  DONE.textOutput='';
+ }
+}
+function backToDashboard(){
+ $('photoTool').classList.add('hidden');
+ $('textTool').classList.add('hidden');
+ $('dashboardHome').classList.remove('hidden');
+}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>showTool(b.dataset.tool));
+document.querySelectorAll('[data-open-tool]').forEach(b=>b.onclick=()=>showTool(b.dataset.openTool));
+document.querySelectorAll('.backBtn').forEach(b=>b.onclick=backToDashboard);
+window.showTool=showTool;
+$('photoInput').onchange=()=>{let f=$('photoInput').files[0];if(!f)return;let url=URL.createObjectURL(f);$('photoPreview').src=url;$('photoPreview').classList.remove('hidden');$('photoOutput').textContent='Image selected: '+f.name};
+$('clearPhoto').onclick=()=>{$('photoInput').value='';$('photoPreview').classList.add('hidden');$('photoPreview').removeAttribute('src');$('photoQuestion').value='';$('photoOutput').textContent='Your answer will appear here.';DONE.photoOutput=''};
+$('photoAsk').onclick=()=>{if(!$('photoInput').files.length)return alert('Please upload or take a photo first.');let out=$('photoOutput'),q=$('photoQuestion').value.trim();if(!q)return show(out,'I cannot read photos in the offline app. Please type your question in the box above and press Get answer again - I can explain built-in topics and tell you how to write the answer.\n\nFor real photo solving, use the online version:\n'+ONLINE);let r=explainTopic(q,$('photoLang').value);show(out,'(I cannot read the photo offline, so this is based on your typed question.)\n\n'+(r||answerGuide(q,'')+'\n\nFor a full worked solution use the online version:\n'+ONLINE))};
+$('clearText').onclick=()=>{$('topicInput').value='';DONE.textOutput='';$('textOutput').textContent='Your study help will appear here.'};
+$('generateBtn').onclick=()=>{let input=$('topicInput').value.trim();if(!input)return alert('Please enter a topic or question.');let out=$('textOutput');if(selectedTool==='exam'){let r=examPlan(input,$('timeChoice').value);if(!r)return show(out,'Please type how much time is left (for example 3 hours or 90 minutes) in the "Time left" box.');return show(out,r)}if(selectedTool==='answer')return show(out,answerGuide(input,$('classChoice').value));if(selectedTool==='notebook')return show(out,notebookPlan(input));if(selectedTool==='mistakes')return show(out,mistakeFinder(input));if(selectedTool==='revision')return show(out,chapterNotes(input));if(selectedTool==='language')return show(out,explainTopic(input,$('languageChoice').value)||noTopic(input));needsOnline(out,descriptions[selectedTool][0])};
+
+// ---------------- OWNER WEBSITE CONTROL PANEL ----------------
+const ADMIN_TOOL_NAMES = [
+  ['photo','Photo Solver'],['mistakes','Mistake Pattern Finder'],
+  ['notebook','Notebook Completion'],['answer','Answer-Length Controller'],
+  ['revision','One-Page Chapter Maker'],['language','Multi-Language Explainer'],
+  ['exam','Last-Day Exam Rescue']
+];
+const ADMIN_DEFAULTS = {siteTitle:'पढ़ाईAI', welcome:'Learn smarter. Feel exam-ready.', theme:'purple', enabled:{}};
+function readAdminSettings(){
+  try { return {...ADMIN_DEFAULTS, ...(JSON.parse(localStorage.getItem('padhai_site_settings')||'{}'))}; }
+  catch { return {...ADMIN_DEFAULTS}; }
+}
+function saveAdminSettings(v){ localStorage.setItem('padhai_site_settings', JSON.stringify(v)); }
+async function digestOwnerPassword(value){
+  const data = new TextEncoder().encode(value);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash)).map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+function ownerIsConfigured(){ return !!localStorage.getItem('padhai_owner_hash'); }
+function openOwnerGate(){
+  if(!currentUser || currentUser.email.toLowerCase()!=='devyanshh@outlook.com'){ alert('Owner Panel is available only to the administrator account.'); return; }
+  $('ownerGate').style.display='flex';
+  $('ownerGateTitle').textContent=ownerIsConfigured()?'Owner login':'Set up owner access';
+  $('ownerGateInfo').textContent=ownerIsConfigured()?'Enter your owner password to open website controls.':'Create an owner password. You will need it whenever you open this panel in this browser.';
+  $('ownerGateSubmit').textContent=ownerIsConfigured()?'Unlock control panel':'Create owner password';
+  $('ownerPassword').value='';
+  $('ownerPassword').focus();
+}
+function closeOwnerGate(){ $('ownerGate').style.display='none'; }
+function renderAdminPanel(){
+  const userData=users();
+  const emails=Object.keys(userData).sort((a,b)=>a.localeCompare(b));
+  $('statUsers').textContent=emails.length;
+  // Global visitor statistics are loaded on demand from Cloudflare D1.
+  const settings=readAdminSettings();
+  const enabled=ADMIN_TOOL_NAMES.filter(([key])=>settings.enabled[key]!==false).length;
+  $('statTools').textContent=enabled+' / 7';
+  const search=($('userSearch')?.value||'').trim().toLowerCase();
+  $('userList').innerHTML='';
+  const filtered=emails.filter(email=>{
+    const name=(userData[email].name||'Student').toLowerCase();
+    return email.toLowerCase().includes(search)||name.includes(search);
+  });
+  if(!filtered.length){
+    $('userList').textContent=emails.length
+      ? 'No registered accounts match your search.'
+      : 'No accounts have been registered in this browser yet.';
+  } else {
+    const summary=document.createElement('div');
+    summary.className='small';
+    summary.textContent='Showing '+filtered.length+' of '+emails.length+' registered account(s).';
+    $('userList').append(summary);
+    filtered.forEach(email=>{
+      const account=userData[email];
+      const row=document.createElement('div'); row.className='admin-toggle';
+      const info=document.createElement('div');
+      const name=document.createElement('strong'); name.textContent=account.name||'Student';
+      const mail=document.createElement('div'); mail.className='small'; mail.textContent=email;
+      const date=document.createElement('div'); date.className='small';
+      date.textContent=account.createdAt?'Registered: '+new Date(account.createdAt).toLocaleString():'Registration date unavailable';
+      info.append(name,mail,date);
+      const del=document.createElement('button'); del.className='ghost'; del.type='button'; del.textContent='Delete';
+      del.onclick=()=>{
+        if(!confirm('Delete the registered account '+email+' from this browser?')) return;
+        const updated=users(); delete updated[email];
+        localStorage.setItem('padhai_users',JSON.stringify(updated));
+        renderAdminPanel();
+      };
+      row.append(info,del); $('userList').append(row);
+    });
+  }
+  $('toolToggles').innerHTML='';
+  ADMIN_TOOL_NAMES.forEach(([key,label])=>{
+    const row=document.createElement('label'); row.className='admin-toggle';
+    const title=document.createElement('span'); title.textContent=label;
+    const check=document.createElement('input'); check.type='checkbox'; check.checked=settings.enabled[key]!==false;
+    check.onchange=()=>{
+      const next=readAdminSettings(); next.enabled[key]=check.checked; saveAdminSettings(next);
+      applyAdminSettings(); renderAdminPanel();
+    };
+    row.append(title,check); $('toolToggles').append(row);
+  });
+  $('siteTitleInput').value=settings.siteTitle||'पढ़ाईAI';
+  $('welcomeTextInput').value=settings.welcome||'Learn smarter. Feel exam-ready.';
+  $('themeChoice').value=settings.theme||'purple';
+}
+function applyAdminSettings(){
+  const s=readAdminSettings();
+  document.querySelectorAll('.topbar .brand').forEach(el=>{
+    const logo=el.querySelector('.logo'); el.textContent='';
+    if(logo) el.append(logo);
+    el.append(document.createTextNode(' '+(s.siteTitle||'पढ़ाईAI')));
+  });
+  const h=$('dashboardHome')?.querySelector('.hero h1');
+  if(h) h.textContent=s.welcome||'Learn smarter. Feel exam-ready.';
+  const themes={
+    purple:['#6c4df6','#ff4d8d'],
+    blue:['#2563eb','#06b6d4'],
+    green:['#0f9d75','#65b94a']
+  };
+  const colors=themes[s.theme]||themes.purple;
+  document.documentElement.style.setProperty('--primary',colors[0]);
+  document.documentElement.style.setProperty('--pink',colors[1]);
+  document.querySelectorAll('[data-tool]').forEach(btn=>{
+    const key=btn.dataset.tool; const on=!s.enabled || s.enabled[key]!==false;
+    btn.classList.toggle('hidden',!on);
+  });
+  document.querySelectorAll('[data-open-tool]').forEach(btn=>{
+    const key=btn.dataset.openTool; btn.classList.toggle('hidden',!!s.enabled && s.enabled[key]===false);
+  });
+}
+function showAdminTab(tab){
+  document.querySelectorAll('#adminTabs [data-admin-tab]').forEach(b=>b.classList.toggle('active',b.dataset.adminTab===tab));
+  ['overview','users','tools','appearance'].forEach(k=>$('admin'+k.charAt(0).toUpperCase()+k.slice(1)).classList.toggle('hidden',k!==tab));
+}
+$('ownerPanelBtn').addEventListener('click',openOwnerGate);
+$('ownerGateCancel').addEventListener('click',closeOwnerGate);
+$('ownerGateForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const pass=$('ownerPassword').value;
+  if(pass.length<8){alert('Please use at least 8 characters.');return;}
+  const hash=await digestOwnerPassword(pass);
+  if(!ownerIsConfigured()){
+    localStorage.setItem('padhai_owner_hash',hash);
+    closeOwnerGate(); openAdminPanel();
+  } else if(hash===localStorage.getItem('padhai_owner_hash')){
+    closeOwnerGate(); openAdminPanel();
+  } else { alert('Incorrect owner password.'); $('ownerPassword').value=''; }
+});
+function openAdminPanel(){
+  if(!currentUser || currentUser.email.toLowerCase()!=='devyanshh@outlook.com'){ alert('Owner Panel is available only to devyanshh@outlook.com.'); return; }
+  $('dashboardHome').classList.add('hidden');
+  $('photoTool').classList.add('hidden'); $('textTool').classList.add('hidden');
+  $('ownerPanel').classList.remove('hidden');
+  $('ownerPanelBtn').classList.add('hidden');
+  renderAdminPanel(); showAdminTab('overview');
+}
+
+$('userSearch').addEventListener('input',renderAdminPanel);
+$('refreshUsersBtn').addEventListener('click',renderAdminPanel);
+$('exportUsersBtn').addEventListener('click',()=>{
+  const data=users();
+  const rows=[['Name','Email','Registered At']];
+  Object.keys(data).sort().forEach(email=>{
+    const u=data[email];
+    rows.push([u.name||'Student',email,u.createdAt||'']);
+  });
+  const csv=rows.map(row=>row.map(value=>'"'+String(value).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='padhaiAI-registered-accounts.csv';
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+});
+$('ownerCloseBtn').addEventListener('click',()=>{
+  $('ownerPanel').classList.add('hidden'); $('dashboardHome').classList.remove('hidden');
+  $('ownerPanelBtn').classList.toggle('hidden',!currentUser || currentUser.email.toLowerCase()!=='devyanshh@outlook.com');
+});
+document.querySelectorAll('#adminTabs [data-admin-tab]').forEach(b=>b.addEventListener('click',()=>showAdminTab(b.dataset.adminTab)));
+$('saveSiteSettings').addEventListener('click',()=>{
+  const s=readAdminSettings();
+  s.siteTitle=$('siteTitleInput').value.trim()||'पढ़ाईAI';
+  s.welcome=$('welcomeTextInput').value.trim()||'Learn smarter. Feel exam-ready.';
+  s.theme=$('themeChoice').value;
+  saveAdminSettings(s); applyAdminSettings();
+  $('settingsMessage').textContent='Website settings saved in this browser.';
+});
+$('resetSiteSettings').addEventListener('click',()=>{
+  if(!confirm('Reset website appearance and tool visibility?')) return;
+  localStorage.removeItem('padhai_site_settings'); applyAdminSettings(); renderAdminPanel();
+  $('settingsMessage').textContent='Default settings restored.';
+});
+const originalShowTool=showTool;
+showTool=function(t){
+  const s=readAdminSettings();
+  if(s.enabled && s.enabled[t]===false){alert('This study tool is currently disabled by the website owner.');return;}
+  originalShowTool(t);
+};
+applyAdminSettings();
+
+
+$('loadGlobalStatsBtn')?.addEventListener('click',updateGlobalVisitorStats);
+$('cloudOwnerKey')?.addEventListener('keydown',e=>{if(e.key==='Enter')updateGlobalVisitorStats();});
+window.addEventListener('DOMContentLoaded',()=>{
+ const savedKey=sessionStorage.getItem('padhai_cloud_owner_key');
+ if(savedKey && $('cloudOwnerKey'))$('cloudOwnerKey').value=savedKey;
+});
+</script>
+</body>
+</html>
